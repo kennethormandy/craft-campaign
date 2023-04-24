@@ -518,6 +518,14 @@ class CampaignElement extends Element
                 ]),
                 'url' => $this->getUrl(),
             ],
+            [
+                'label' => Craft::t('app', 'Plaintext {type} page', [
+                    'type' => self::lowerDisplayName(),
+                ]),
+                'url' => UrlHelper:: urlWithParams($this->getUrl(), [
+                    'campaignTemplate' => 'plaintext'
+                ]),
+            ]
         ];
     }
 
@@ -526,9 +534,12 @@ class CampaignElement extends Element
      */
     protected function route(): array|string|null
     {
+        $templateParam = Craft::$app->request->getQueryParam('campaignTemplate');
+        $template = $templateParam === 'plaintext' ? $this->getCampaignType()->plaintextTemplate : $this->getCampaignType()->htmlTemplate;
+
         return [
             'templates/render', [
-                'template' => $this->getCampaignType()->htmlTemplate,
+                'template' => $template,
                 'variables' => [
                     'campaign' => $this,
                     'browserVersionUrl' => $this->url,
